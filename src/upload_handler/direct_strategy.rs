@@ -55,7 +55,7 @@ impl DirectStrategy {
     }
 
     fn check_image_type(image_type: &ImageType) -> ActixResult<()> {
-        if image_type == ImageType::Unknown {
+        if *image_type == ImageType::Unknown {
             return Err(error::ErrorBadRequest("unsupported image format"));
         }
         Ok(())
