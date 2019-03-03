@@ -49,7 +49,7 @@ trait Strategy {
     fn handle_request(&self, req: &HttpRequest<AppState>) -> HandlerResult;
 }
 
-fn std_error_into_internal_server(e: std::io::Error) -> Error {
-    let message = format!("{:?}", e);
-    error::ErrorInternalServerError(message)
-}
+// fn std_error_into_internal_server(e: std::io::Error) -> Error {
+    // let message = format!("{:?}", e);
+    // error::ErrorInternalServerError(message)
+// }

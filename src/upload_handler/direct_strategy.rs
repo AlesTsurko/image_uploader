@@ -11,16 +11,14 @@ use serde_json::{
     json,
     Value as JsonValue,
 };
-use std::fs::{File, create_dir_all};
-use std::io::Write;
 use crate::{
     ImageType, 
+    RawImage,
     AppState,
 };
 use super::{
     HandlerResult, 
     Strategy,
-    std_error_into_internal_server,
 };
 use bytes::Bytes;
 
@@ -44,9 +42,10 @@ impl DirectStrategy {
         let image_type = DirectStrategy::get_image_type_from_mime_type(&mime_type)?;
         DirectStrategy::check_image_type(&image_type)?;
 
-        DirectStrategy::write_image_from_content_with_type(body, &image_type, &app_state.storage_path)?;
+        let raw_image = RawImage::new(body, &image_type, &app_state.storage_path);
+        raw_image.save()?;
 
-        let response = DirectStrategy::prepare_succesful_response();
+        let response = DirectStrategy::prepare_succesful_response(&raw_image);
 
         Ok(HttpResponse::Ok().json(response))
     }
@@ -65,25 +64,7 @@ impl DirectStrategy {
         Ok(())
     }
 
-    fn write_image_from_content_with_type(content: &Bytes, image_type: &ImageType, storage_path: &str) -> ActixResult<()> {
-        create_dir_all(storage_path)
-            .map_err(std_error_into_internal_server)?;
-
-        let file_path = DirectStrategy::get_image_path_for_storage_path_and_image_type(image_type, storage_path)?;
-        let mut file = File::create(&file_path)
-            .map_err(std_error_into_internal_server)?;
-
-        file.write_all(&content)
-            .map_err(std_error_into_internal_server)
-    }
-
-    fn get_image_path_for_storage_path_and_image_type(image_type: &ImageType, storage_path: &str) -> ActixResult<String> {
-        //TODO generate id
-        let id = "image";
-        Ok(format!("{}/{}.{}", storage_path, id, image_type.to_string()))
-    }
-
-    fn prepare_succesful_response() -> JsonValue {
+    fn prepare_succesful_response(raw_image: &RawImage) -> JsonValue {
         json!({
             //ids
             //preview_urls
