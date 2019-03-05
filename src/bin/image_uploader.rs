@@ -51,7 +51,7 @@ fn main() {
         App::with_state(app_state.clone())
             .middleware(middleware::Logger::new("\"%r\" %s %b %Dms"))
             .resource("/upload", |r| r.method(http::Method::PUT).h(UploadHandler))
-            .resource(r"/{id:.*}", |r| r.method(http::Method::GET).h(GetImageHandler))
+            .resource(r"/{id:.+}", |r| r.method(http::Method::GET).h(GetImageHandler))
     }).bind(&bind_to)
     .expect("Unable to start the server")
         .run();

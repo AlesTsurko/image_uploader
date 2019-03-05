@@ -6,6 +6,7 @@ use std::io::Write;
 use crate::{
     ImageUploaderResult,
     IMAGE_NAME,
+    PREVIEW_NAME,
 };
 
 #[derive(Debug, Clone)]
@@ -40,6 +41,10 @@ impl Image {
 
     pub fn get_file_path(&self) -> String {
         format!("{}/{}.{}", self.get_directory_path(), IMAGE_NAME, self.image_type.to_string())
+    }
+
+    pub fn get_preview_file_path(&self) -> String {
+        format!("{}/{}.{}", self.get_directory_path(), PREVIEW_NAME, self.image_type.to_string())
     }
 }
 

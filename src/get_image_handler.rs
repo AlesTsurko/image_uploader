@@ -9,10 +9,11 @@ use crate::{
     AppState,
     ImageUploaderResult, 
     IMAGE_NAME,
+    PREVIEW_NAME,
 };
 use std::path::PathBuf;
 use std::fs::{read_dir, DirEntry};
-use failure::{Fail, ensure};
+use failure::Fail;
 
 pub struct GetImageHandler;
 
@@ -21,9 +22,11 @@ impl Handler<AppState> for GetImageHandler {
 
     fn handle(&self, req: &HttpRequest<AppState>) -> Self::Result {
         let directory_path = self.get_directory_path(req)?;
+        let is_preview = req.query().contains_key("preview");
 
-        if let Some(Ok(dir_entry)) = read_dir(directory_path)?.nth(0) {
-            self.check_image_name(&dir_entry)?;
+        let item = if is_preview { (1, PREVIEW_NAME) } else { (0, IMAGE_NAME) };
+        if let Some(Ok(dir_entry)) = read_dir(directory_path)?.nth(item.0) {
+            self.check_image_name(&dir_entry, item.1)?;
             return Ok(NamedFile::open(dir_entry.path())?)
         }
 
@@ -40,8 +43,8 @@ impl GetImageHandler {
         Ok(path)
     }
 
-    fn check_image_name(&self, dir_entry: &DirEntry) -> ImageUploaderResult<()> {
-        let image_name = IMAGE_NAME.to_string();
+    fn check_image_name(&self, dir_entry: &DirEntry, name: &str) -> ImageUploaderResult<()> {
+        let image_name = name.to_string();
         let file_name = self.get_file_stem_from_path(&dir_entry.path())?;
         if image_name == file_name {
             Ok(())

@@ -11,7 +11,13 @@ fn get_directory_path() {
 #[test]
 fn get_file_path() {
     let image = init_image();
-    assert_eq!(format!("storage/{}/image.jpg", UUID), image.get_file_path());
+    assert_eq!(format!("storage/{}/{}.jpg", UUID, IMAGE_NAME), image.get_file_path());
+}
+
+#[test]
+fn get_preview_file_path() {
+    let image = init_image();
+    assert_eq!(format!("storage/{}/{}.jpg", UUID, PREVIEW_NAME), image.get_preview_file_path());
 }
 
 #[test]

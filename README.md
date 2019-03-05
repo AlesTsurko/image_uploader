@@ -49,11 +49,14 @@ You should properly set the "Content-Type" field of your request's header. The p
 
 #### Response
 
-| Name       | Type            | Example | Description |
-| ----       | ----            | ------- | :---------- |
-| `ids`      | `Array<String>` | `[]`    |             |
-| `previews` | `Array<String>` | `[]`    |             |
+| Name  | Type            | Example                                    | Description |
+| ----  | ----            | -------                                    | :---------- |
+| `ids` | `Array<String>` | `["936da01f-9abd-4d9d-80c7-02af85c822a8"]` |             |
 
 ### `GET /:id`
 
-Responses with image.
+Responses with an image.
+
+### `GET /:id?preview`
+
+Responses with an image preview.

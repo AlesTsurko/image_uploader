@@ -7,18 +7,17 @@ use actix_web::{
     error::Result as ActixResult,
 };
 use futures::{Future, Stream};
-use serde_json::{
-    json,
-    Value as JsonValue,
-};
+use serde_json::Value as JsonValue;
 use crate::{
     ImageType, 
     Image,
     AppState,
+    ImageUploaderResult,
 };
 use super::{
     HandlerResult, 
     Strategy,
+    SuccessResponse,
 };
 use bytes::Bytes;
 
@@ -45,7 +44,7 @@ impl DirectStrategy {
         let raw_image = Image::new(body, &image_type, &app_state.storage_path);
         raw_image.save()?;
 
-        let response = DirectStrategy::prepare_succesful_response(&raw_image);
+        let response = DirectStrategy::prepare_succesful_response(&raw_image)?;
 
         Ok(HttpResponse::Ok().json(response))
     }
@@ -64,13 +63,10 @@ impl DirectStrategy {
         Ok(())
     }
 
-    fn prepare_succesful_response(image: &Image) -> JsonValue {
-        json!({
-            //ids
-            //preview_urls
-            //formats
-            "status": "ok"
-        })
+    fn prepare_succesful_response(image: &Image) -> ImageUploaderResult<JsonValue> {
+        Ok(serde_json::to_value(SuccessResponse {
+            ids: vec![image.id.to_string()]
+        })?)
     }
 
 }

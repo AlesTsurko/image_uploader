@@ -12,6 +12,7 @@ use actix_web::{
 use futures::future::{Future, result};
 use direct_strategy::DirectStrategy;
 use crate::AppState;
+use serde_derive::Serialize;
 
 type HandlerResult = Box<Future<Item = HttpResponse, Error = Error>>;
 
@@ -49,7 +50,7 @@ trait Strategy {
     fn handle_request(&self, req: &HttpRequest<AppState>) -> HandlerResult;
 }
 
-// fn std_error_into_internal_server(e: std::io::Error) -> Error {
-    // let message = format!("{:?}", e);
-    // error::ErrorInternalServerError(message)
-// }
+#[derive(Serialize, Debug)]
+struct SuccessResponse {
+    ids: Vec<String>,
+}
