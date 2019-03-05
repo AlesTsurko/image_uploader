@@ -44,5 +44,6 @@ fn init_image() -> Image {
         image_type: ImageType::Jpeg,
         storage_path: "storage".to_string(),
         id, 
+        preview_maker: None,
     }
 }
