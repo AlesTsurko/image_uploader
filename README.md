@@ -22,7 +22,7 @@ The next methods are allowed:
 $ image_uploader --help
 Image Uploader 0.1.0
 Ales Tsurko
-Image uploader server demo.
+An image uploader server demo.
 
 USAGE:
     image_uploader [OPTIONS] --bind_to <ADDRESS>
@@ -33,8 +33,8 @@ FLAGS:
 
 OPTIONS:
     -b, --bind_to <ADDRESS>      127.0.0.1:8000 for ex.
-    -s, --storage_path <PATH>    Specify path where data will be stored. If not specified default path (./storage) will
-                                 be used.
+    -s, --storage_path <PATH>    Specifies the path where to store the data. If not specified the default one
+                                 (./storage) will be used.
 ```
 
 ## API
@@ -49,9 +49,9 @@ You should properly set the "Content-Type" field of your request's header. The p
 
 #### Response
 
-| Name  | Type            | Example                                    | Description |
-| ----  | ----            | -------                                    | :---------- |
-| `ids` | `Array<String>` | `["936da01f-9abd-4d9d-80c7-02af85c822a8"]` |             |
+| Name  | Type            | Example                                    |
+| ----  | ----            | -------                                    |
+| `ids` | `Array<String>` | `["936da01f-9abd-4d9d-80c7-02af85c822a8"]` |
 
 ### `GET /:id`
 

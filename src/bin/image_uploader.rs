@@ -18,7 +18,7 @@ fn main() {
     let matches = ClapApp::new("Image Uploader")
         .version("0.1.0")
         .author("Ales Tsurko")
-        .about("Image uploader server demo.")
+        .about("An image uploader server demo.")
         .arg(Arg::with_name("bind_to")
              .short("b")
              .long("bind_to")
@@ -30,7 +30,7 @@ fn main() {
              .short("s")
              .long("storage_path")
              .value_name("PATH")
-             .help("Specify path where data will be stored. If not specified default path (./storage) will be used.")
+             .help("Specifies the path where to store the data. If not specified the default one (./storage) will be used.")
              .required(false)
              .takes_value(true))
         .get_matches();
