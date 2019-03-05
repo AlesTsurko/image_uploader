@@ -56,10 +56,4 @@ You should properly set the "Content-Type" field of your request's header. The p
 
 ### `GET /:id`
 
-#### Response
-
-| Name      | Type     | Example | Description |
-| ----      | ----     | ------- | :---------- |
-| `url`     | `String` |         |             |
-| `preview` | `String` |         |             |
-
+Responses with image.
