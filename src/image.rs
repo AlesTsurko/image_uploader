@@ -1,3 +1,4 @@
+#[cfg(test)] mod tests;
 use bytes::Bytes;
 use uuid::Uuid;
 use std::fs::{File, create_dir_all};
@@ -5,16 +6,16 @@ use std::io::Write;
 use crate::ImageUploaderResult;
 
 #[derive(Debug, Clone)]
-pub struct RawImage {
+pub struct Image {
     pub content: Bytes,
     pub image_type: ImageType,
     pub storage_path: String,
     pub id: Uuid, 
 }
 
-impl RawImage {
+impl Image {
     pub fn new(bytes: &Bytes, image_type: &ImageType, storage_path: &str) -> Self {
-        RawImage {
+        Image {
             id: Uuid::new_v4(),
             storage_path: storage_path.to_string(),
             image_type: image_type.clone(),

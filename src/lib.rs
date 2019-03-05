@@ -3,7 +3,7 @@ mod upload_handler;
 mod app_state;
 pub use image::{
     ImageType,
-    RawImage,
+    Image,
 };
 pub use upload_handler::UploadHandler;
 pub use app_state::AppState;

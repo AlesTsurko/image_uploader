@@ -41,7 +41,10 @@ fn main() {
     let storage_path = matches.value_of("storage_path")
         .unwrap_or("storage")
         .to_string();
-    let app_state = AppState::new(storage_path);
+    let app_state = AppState {
+        bind_to: bind_to.to_string(),
+        storage_path: storage_path.to_string(),
+    };
 
     server::new(move || {
         App::with_state(app_state.clone())

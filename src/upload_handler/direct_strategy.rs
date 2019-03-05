@@ -13,7 +13,7 @@ use serde_json::{
 };
 use crate::{
     ImageType, 
-    RawImage,
+    Image,
     AppState,
 };
 use super::{
@@ -42,7 +42,7 @@ impl DirectStrategy {
         let image_type = DirectStrategy::get_image_type_from_mime_type(&mime_type)?;
         DirectStrategy::check_image_type(&image_type)?;
 
-        let raw_image = RawImage::new(body, &image_type, &app_state.storage_path);
+        let raw_image = Image::new(body, &image_type, &app_state.storage_path);
         raw_image.save()?;
 
         let response = DirectStrategy::prepare_succesful_response(&raw_image);
@@ -64,7 +64,7 @@ impl DirectStrategy {
         Ok(())
     }
 
-    fn prepare_succesful_response(raw_image: &RawImage) -> JsonValue {
+    fn prepare_succesful_response(image: &Image) -> JsonValue {
         json!({
             //ids
             //preview_urls
