@@ -67,8 +67,7 @@ impl Image {
     }
 
     pub fn get_directory_path(&self) -> String {
-        format!("{}/{}", self.storage_path, self.id)
-    }
+        format!("{}/{}", self.storage_path, self.id) }
 
     pub fn get_file_path(&self) -> String {
         format!("{}/{}.{}", self.get_directory_path(), IMAGE_NAME, self.image_type.to_string())
@@ -108,13 +107,7 @@ impl From<mime::Mime> for ImageType {
 
 impl From<&mime::Mime> for ImageType {
     fn from(t: &mime::Mime) -> Self {
-        match t.subtype() {
-            mime::BMP => ImageType::Bmp,
-            mime::GIF => ImageType::Gif,
-            mime::JPEG => ImageType::Jpeg,
-            mime::PNG => ImageType::Png,
-            _ => ImageType::Unknown,
-        }
+        ImageType::from(t.clone())
     }
 }
 
@@ -132,7 +125,7 @@ impl ToString for ImageType {
 
 pub trait PreviewMaker {
     fn make_preview_from_image(&self, image: &Image) -> ImageUploaderResult<Image>;
-    // a "hack" to make this trait work in cloneable object trait
+    // a "hack" to make this trait work in cloneable trait object
     fn box_clone(&self) -> Box<PreviewMaker>;
 }
 
