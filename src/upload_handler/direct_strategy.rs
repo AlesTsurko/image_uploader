@@ -41,10 +41,10 @@ impl DirectStrategy {
         let image_type = DirectStrategy::get_image_type_from_mime_type(&mime_type)?;
         DirectStrategy::check_image_type(&image_type)?;
 
-        let raw_image = Image::new(body, &image_type, &app_state.storage_path);
-        raw_image.save()?;
+        let image = Image::new(body, &image_type, &app_state.storage_path);
+        image.save()?;
 
-        let response = DirectStrategy::prepare_succesful_response(&raw_image)?;
+        let response = DirectStrategy::prepare_succesful_response(&image)?;
 
         Ok(HttpResponse::Ok().json(response))
     }

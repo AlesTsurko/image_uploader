@@ -15,7 +15,6 @@ The next methods are allowed:
 - using JSON request with base64 encoded string;
 - from destination URL.
 
-
 ## Usage
 
 ```
@@ -52,6 +51,14 @@ You should properly set the "Content-Type" field of your request's header. The p
 | Name  | Type            | Example                                    |
 | ----  | ----            | -------                                    |
 | `ids` | `Array<String>` | `["936da01f-9abd-4d9d-80c7-02af85c822a8"]` |
+
+### `PUT /upload?url=:url`
+
+Uploads an image from the given URL.
+
+#### Response
+
+The same as for `PUT /upload`
 
 ### `GET /:id`
 
