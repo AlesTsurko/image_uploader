@@ -3,15 +3,16 @@ use crate::{
     PREVIEW_SIZE,
 };
 use super::{
-    PreviewMaker,
     Image,
     ImageType,
+    PreviewMaker,
 };
 use image::{
-    load_from_memory_with_format,
+    DynamicImage,
+    FilterType,
     ImageFormat,
     ImageOutputFormat,
-    DynamicImage,
+    load_from_memory_with_format,
 };
 use failure::Fail;
 
@@ -21,8 +22,8 @@ pub struct NativePreviewMaker;
 impl PreviewMaker for NativePreviewMaker {
     fn make_preview_from_image(&self, image: &Image) -> ImageUploaderResult<Image> {
         let image_format = self.get_image_format_for_image_type(&image.image_type)?;
-        let thumbnail = self.get_thumbnail_for_image_with_format(image, &image_format)?;
-        let buf = self.dyn_image_with_format_into_buf(&thumbnail, &image_format)?;
+        let preview = self.get_preview_for_image_with_format(image, &image_format)?;
+        let buf = self.dyn_image_with_format_into_buf(&preview, &image_format)?;
 
         Ok(Image {
             content: buf.into(),
@@ -50,9 +51,9 @@ impl NativePreviewMaker {
         }
     }
 
-    fn get_thumbnail_for_image_with_format(&self, image: &Image, image_format: &ImageFormat) -> ImageUploaderResult<DynamicImage> {
+    fn get_preview_for_image_with_format(&self, image: &Image, image_format: &ImageFormat) -> ImageUploaderResult<DynamicImage> {
         let dyn_image = load_from_memory_with_format(&image.content, *image_format)?;
-        Ok(dyn_image.thumbnail(PREVIEW_SIZE.0, PREVIEW_SIZE.1))
+        Ok(dyn_image.resize_to_fill(PREVIEW_SIZE.0, PREVIEW_SIZE.1, FilterType::Nearest))
     }
 
     fn dyn_image_with_format_into_buf(&self, dyn_image: &DynamicImage, image_format: &ImageFormat) -> ImageUploaderResult<Vec<u8>> {

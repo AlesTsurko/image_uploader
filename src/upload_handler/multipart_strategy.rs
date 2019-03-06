@@ -10,7 +10,7 @@ use actix_web::{
     dev::Payload,
     FutureResponse,
 };
-use futures::{future::result, Future, Stream};
+use futures::{future::err, Future, Stream};
 use crate::{
     ImageType, 
     Image,
@@ -54,13 +54,13 @@ impl MultipartStrategy {
     fn process_field_with_state(field: multipart::Field<Payload>, state: AppState) -> FutureResponse<String> {
         let image_type = match MultipartStrategy::check_content_type(&field) {
             Ok(t) => t,
-            Err(e) => return Box::new(result(Err(e)))
+            Err(e) => return Box::new(err(e))
         };
 
         let future_id = field.concat2()
             .from_err::<error::Error>()
             .and_then(move |body| Ok(MultipartStrategy::save_image(&body, &image_type, &state.storage_path)?))
-            .map_err(|e| error::ErrorInternalServerError(e));
+            .map_err(error::ErrorInternalServerError);
 
         Box::new(future_id)
     }
