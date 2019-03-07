@@ -8,8 +8,11 @@ services:
         volumes:
             - cargo:/home/rust/.cargo
             - target:/home/rust/src/target
+            - ./storage:/app/storage
         command: >
             -b 0.0.0.0:8000
+        ports:
+            - "8000:8000"
 
 volumes:
     cargo: {}
