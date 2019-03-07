@@ -1,6 +1,7 @@
 mod direct_strategy;
 mod multipart_strategy;
 mod url_strategy;
+mod base64_strategy;
 use actix_web::{
     HttpRequest,
     HttpResponse,
@@ -15,6 +16,7 @@ use futures::future::{result};
 use direct_strategy::DirectStrategy;
 use multipart_strategy::MultipartStrategy;
 use url_strategy::UrlStrategy;
+use base64_strategy::Base64Strategy;
 use crate::AppState;
 use serde_derive::Serialize;
 
@@ -50,7 +52,7 @@ impl UploadHandler {
         };
 
         match (mime.type_(), mime.subtype()) {
-            (mime::APPLICATION, mime::JSON) => Ok(Box::new(DirectStrategy {})),
+            (mime::APPLICATION, mime::JSON) => Ok(Box::new(Base64Strategy {})),
             (mime::MULTIPART, mime::FORM_DATA) => Ok(Box::new(MultipartStrategy {})),
             (mime::IMAGE, _) => Ok(Box::new(DirectStrategy {})),
             _ => Err(error::ErrorBadRequest("Unsupported MIME type")),
