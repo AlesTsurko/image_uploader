@@ -17,6 +17,12 @@ The next methods are allowed:
 
 ## Usage
 
+Using docker (will run on port `8000`):
+```
+$ docker-compose up
+```
+
+Or install and:
 ```
 $ image_uploader --help
 Image Uploader 0.1.0

@@ -1,0 +1,16 @@
+version: '2'
+services:
+    app:
+        image: image_uploader
+        build: .
+        container_name: image_uploader
+        restart: unless-stopped
+        volumes:
+            - cargo:/home/rust/.cargo
+            - target:/home/rust/src/target
+        command: >
+            -b 0.0.0.0:8000
+
+volumes:
+    cargo: {}
+    target: {}

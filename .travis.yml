@@ -1,12 +1,7 @@
-language: rust
-rust:
-    - stable
+language: generic
 
-cache:
-    directories:
-        - /home/travis/.cargo
+services:
+    - docker
 
-addons:
-    apt:
-        packages:
-            - openssl
+script:
+    - docker build -t ales_tsurko/image_uploader .
