@@ -37,7 +37,7 @@ impl Strategy for DirectStrategy {
 }
 
 impl DirectStrategy {
-    fn respond_for_body_with_mime_type(app_state: AppState, body: &Bytes, mime_type: &Option<mime::Mime>) -> ActixResult<HttpResponse> {
+    pub fn respond_for_body_with_mime_type(app_state: AppState, body: &Bytes, mime_type: &Option<mime::Mime>) -> ActixResult<HttpResponse> {
         let image_type = DirectStrategy::get_image_type_from_mime_type(&mime_type)?;
         DirectStrategy::check_image_type(&image_type)?;
 

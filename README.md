@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/AlesTsurko/image_uploader.svg?branch=master)](https://travis-ci.org/AlesTsurko/image_uploader)
 
 # image_uploader
-A demo of image uploader server written in Rust with [actix-web](https://github.com/actix/actix-web).
+A demo of an image uploader server written in Rust with [actix-web](https://github.com/actix/actix-web).
 
 Supports:
 - JPEG

@@ -1,5 +1,6 @@
 mod direct_strategy;
 mod multipart_strategy;
+mod url_strategy;
 use actix_web::{
     HttpRequest,
     HttpResponse,
@@ -13,6 +14,7 @@ use actix_web::{
 use futures::future::{result};
 use direct_strategy::DirectStrategy;
 use multipart_strategy::MultipartStrategy;
+use url_strategy::UrlStrategy;
 use crate::AppState;
 use serde_derive::Serialize;
 
@@ -35,8 +37,7 @@ impl Handler<AppState> for UploadHandler {
 impl UploadHandler {
     fn choose_strategy(&self, req: &HttpRequest<AppState>) -> ActixResult<Box<Strategy>> {
         if req.query().contains_key("url") {
-            //TODO Ok(UrlStrategy {})
-            Ok(Box::new(DirectStrategy {}))
+            Ok(Box::new(UrlStrategy {}))
         } else {
             self.choose_content_based_strategy(req)
         }
