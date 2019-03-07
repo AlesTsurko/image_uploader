@@ -6,13 +6,12 @@ use actix_web::{
     error,
     error::Result as ActixResult,
 };
-use futures::{Future, Stream};
-use serde_json::Value as JsonValue;
+use futures::Future;
 use crate::{
     ImageType, 
     Image,
     AppState,
-    ImageUploaderResult,
+    MAX_JSON_PAYLOAD_SIZE,
 };
 use super::{
     HandlerResult, 
@@ -20,54 +19,55 @@ use super::{
     SuccessResponse,
 };
 use bytes::Bytes;
-use base64::{encode, decode};
+use base64;
+use serde_derive::Deserialize;
 
 pub struct Base64Strategy;
 
 impl Strategy for Base64Strategy {
     fn handle_request(&self, req: &HttpRequest<AppState>) -> HandlerResult {
-        let mime_type = req.mime_type();
         let app_state = req.state().clone();
 
-        req.payload()
-            .concat2()
+        req.json()
+            .limit(MAX_JSON_PAYLOAD_SIZE)
             .from_err()
-            .and_then(|body| Base64Strategy::respond_for_body_with_mime_type(app_state, &body, &mime_type?))
+            .and_then(|json_req: ExpectedJsonRequest| Base64Strategy::process_json_request_with_state(json_req, app_state))
             .responder()
     }
 }
 
 impl Base64Strategy {
-    pub fn respond_for_body_with_mime_type(app_state: AppState, body: &Bytes, mime_type: &Option<mime::Mime>) -> ActixResult<HttpResponse> {
-        let image_type = Base64Strategy::get_image_type_from_mime_type(&mime_type)?;
-        Base64Strategy::check_image_type(&image_type)?;
+    fn process_json_request_with_state(request: ExpectedJsonRequest, state: AppState) -> ActixResult<HttpResponse> {
+        let mut ids: Vec<String> = Vec::new();
 
-        let image = Image::new(body, &image_type, &app_state.storage_path);
-        image.save()?;
-
-        let response = Base64Strategy::prepare_succesful_response(&image)?;
-
-        Ok(HttpResponse::Ok().json(response))
-    }
-
-    fn get_image_type_from_mime_type(mime_type: &Option<mime::Mime>) -> ActixResult<ImageType> {
-        match mime_type {
-            Some(mime_type) => Ok(mime_type.into()),
-            None => Err(error::ErrorBadRequest("mime type isn't specified"))
+        for encoded in request.data.iter() {
+            let image = Base64Strategy::base64_into_image(&encoded, &state)?;
+            image.save()?;
+            ids.push(image.id.to_string());
         }
+
+        Ok(SuccessResponse { ids }.into())
     }
 
-    fn check_image_type(image_type: &ImageType) -> ActixResult<()> {
-        if *image_type == ImageType::Unknown {
-            return Err(error::ErrorBadRequest("unsupported image format"));
+    fn base64_into_image(data: &str, state: &AppState) -> ActixResult<Image> {
+        let bytes: Bytes = base64::decode(data)
+            .map_err(error::ErrorInternalServerError)?
+            .into();
+        let image_type = Base64Strategy::check_image_type(&bytes)?;
+        Ok(Image::new(&bytes, &image_type, &state.storage_path))
+    }
+
+    fn check_image_type(bytes: &Bytes) -> ActixResult<ImageType> {
+        let image_type = Image::guess_type_for_bytes(&bytes)?;
+        if image_type == ImageType::Unknown {
+            return Err(error::ErrorBadRequest("Unknown file format"));
         }
-        Ok(())
+        Ok(image_type)
     }
 
-    fn prepare_succesful_response(image: &Image) -> ImageUploaderResult<JsonValue> {
-        Ok(serde_json::to_value(SuccessResponse {
-            ids: vec![image.id.to_string()]
-        })?)
-    }
+}
 
+#[derive(Deserialize, Debug)]
+struct ExpectedJsonRequest {
+    data: Vec<String>,
 }

@@ -11,6 +11,7 @@ use crate::{
     PREVIEW_NAME,
 };
 use failure::Fail;
+use image::ImageFormat;
 
 #[derive(Clone)]
 pub struct Image {
@@ -76,6 +77,11 @@ impl Image {
     pub fn get_preview_file_path(&self) -> String {
         format!("{}/{}.{}", self.get_directory_path(), PREVIEW_NAME, self.image_type.to_string())
     }
+
+    pub fn guess_type_for_bytes(bytes: &Bytes) -> ImageUploaderResult<ImageType> {
+        let image_format = image::guess_format(bytes)?;
+        Ok(image_format.into())
+    }
 }
 
 #[derive(Fail, Debug)]
@@ -108,6 +114,18 @@ impl From<mime::Mime> for ImageType {
 impl From<&mime::Mime> for ImageType {
     fn from(t: &mime::Mime) -> Self {
         ImageType::from(t.clone())
+    }
+}
+
+impl From<ImageFormat> for ImageType {
+    fn from(image_format: ImageFormat) -> Self {
+        match image_format {
+            ImageFormat::BMP => ImageType::Bmp,
+            ImageFormat::GIF => ImageType::Gif,
+            ImageFormat::JPEG => ImageType::Jpeg,
+            ImageFormat::PNG => ImageType::Png,
+            _ => ImageType::Unknown,
+        }
     }
 }
 

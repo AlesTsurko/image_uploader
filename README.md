@@ -44,6 +44,12 @@ You should properly set the "Content-Type" field of your request's header. The p
 - `application/json` for json requests;
 - `multipart/form-data` for form-data.
 
+For base64 strategy JSON request body model is:
+
+| Name   | Type            | Example |
+| ----   | ----            | ------- |
+| `data` | `Array<String>` |         |
+
 ### `PUT /upload`
 
 #### Response

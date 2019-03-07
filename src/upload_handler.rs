@@ -68,3 +68,14 @@ trait Strategy {
 struct SuccessResponse {
     ids: Vec<String>,
 }
+
+
+impl Into<HttpResponse> for SuccessResponse {
+    fn into(self) -> HttpResponse {
+        let success = match serde_json::to_value(self) {
+            Ok(s) => s,
+            Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
+        };
+        HttpResponse::Ok().json(success)
+    }
+}

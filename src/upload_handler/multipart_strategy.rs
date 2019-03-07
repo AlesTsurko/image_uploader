@@ -2,7 +2,6 @@ use actix_web::{
     AsyncResponder,
     HttpMessage,
     HttpRequest,
-    HttpResponse,
     error,
     error::Result as ActixResult,
     multipart,
@@ -34,7 +33,7 @@ impl Strategy for MultipartStrategy {
             .map(move |item| MultipartStrategy::process_item_with_state(item, app_state.clone()))
             .flatten()
             .collect()
-            .map(MultipartStrategy::get_response)
+            .map(|ids | SuccessResponse { ids }.into())
             .responder()
     }
 }
@@ -79,12 +78,4 @@ impl MultipartStrategy {
         Ok(image.id.to_string())
     }
 
-
-    fn get_response(ids: Vec<String>) -> HttpResponse {
-        let success = match serde_json::to_value(SuccessResponse { ids }) {
-            Ok(s) => s,
-            Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
-        };
-        HttpResponse::Ok().json(success)
-    }
 }

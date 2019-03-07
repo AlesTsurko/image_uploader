@@ -7,12 +7,10 @@ use actix_web::{
     error::Result as ActixResult,
 };
 use futures::{Future, Stream};
-use serde_json::Value as JsonValue;
 use crate::{
     ImageType, 
     Image,
     AppState,
-    ImageUploaderResult,
 };
 use super::{
     HandlerResult, 
@@ -44,9 +42,7 @@ impl DirectStrategy {
         let image = Image::new(body, &image_type, &app_state.storage_path);
         image.save()?;
 
-        let response = DirectStrategy::prepare_succesful_response(&image)?;
-
-        Ok(HttpResponse::Ok().json(response))
+        Ok(SuccessResponse { ids: vec![image.id.to_string()] }.into())
     }
 
     fn get_image_type_from_mime_type(mime_type: &Option<mime::Mime>) -> ActixResult<ImageType> {
@@ -61,12 +57,6 @@ impl DirectStrategy {
             return Err(error::ErrorBadRequest("unsupported image format"));
         }
         Ok(())
-    }
-
-    fn prepare_succesful_response(image: &Image) -> ImageUploaderResult<JsonValue> {
-        Ok(serde_json::to_value(SuccessResponse {
-            ids: vec![image.id.to_string()]
-        })?)
     }
 
 }
