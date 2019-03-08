@@ -41,6 +41,7 @@ impl DirectStrategy {
 
         let image = Image::new(body, &image_type, &app_state.storage_path);
         image.save()?;
+        image.generate_preview()?;
 
         Ok(SuccessResponse { ids: vec![image.id.to_string()] }.into())
     }

@@ -58,7 +58,7 @@ impl MultipartStrategy {
 
         let future_id = field.concat2()
             .from_err::<error::Error>()
-            .and_then(move |body| Ok(MultipartStrategy::save_image(&body, &image_type, &state.storage_path)?))
+            .and_then(move |body| Ok(MultipartStrategy::save_image_and_preview(&body, &image_type, &state.storage_path)?))
             .map_err(error::ErrorInternalServerError);
 
         Box::new(future_id)
@@ -72,9 +72,10 @@ impl MultipartStrategy {
         }
     }
 
-    fn save_image(bytes: &Bytes, image_type: &ImageType, storage_path: &str) -> ActixResult<String> {
+    fn save_image_and_preview(bytes: &Bytes, image_type: &ImageType, storage_path: &str) -> ActixResult<String> {
         let image = Image::new(bytes, image_type, storage_path);
         image.save()?;
+        image.generate_preview()?;
         Ok(image.id.to_string())
     }
 

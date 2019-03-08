@@ -43,6 +43,7 @@ impl Base64Strategy {
         for encoded in request.data.iter() {
             let image = Base64Strategy::base64_into_image(&encoded, &state)?;
             image.save()?;
+            image.generate_preview()?;
             ids.push(image.id.to_string());
         }
 

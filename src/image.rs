@@ -42,21 +42,16 @@ impl Image {
     }
 
     pub fn save(&self) -> ImageUploaderResult<()> {
-        self.save_at_path(&self.get_file_path())?;
-        self.save_preview()
+        self.save_at_path(&self.get_file_path())
     }
 
-    fn save_preview(&self) -> ImageUploaderResult<()> {
+    pub fn generate_preview(&self) -> ImageUploaderResult<()> {
         if let Some(ref preview_maker) = self.preview_maker {
             let preview = preview_maker.make_preview_from_image(self)?;
-            preview.save_as_preview()
+            preview.save_at_path(&self.get_preview_file_path())
         } else {
             Err(ImageError::ErrorMakingPreview.into())
         }
-    }
-
-    fn save_as_preview(&self) -> ImageUploaderResult<()> {
-        self.save_at_path(&self.get_preview_file_path())
     }
 
     fn save_at_path(&self, path: &str) -> ImageUploaderResult<()> {
