@@ -11,7 +11,7 @@ Supports:
 
 The next methods are allowed:
 - send binary data directly (single file upload only);
-- using multipart-form/data;
+- using multipart/form-data;
 - using JSON request with base64 encoded string;
 - from destination URL.
 
